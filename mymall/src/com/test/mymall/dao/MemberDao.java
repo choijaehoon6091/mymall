@@ -1,118 +1,131 @@
 package com.test.mymall.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
+import com.test.mymall.commons.DBHelper;
 import com.test.mymall.vo.Member;
 
 public class MemberDao {
-	// 디비 연결..
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Connection connection = null;
-        Class.forName("com.mysql.jdbc.Driver");
-        String jdbcDriver = "jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=euckr";
-        String dbID = "root";
-        String dbPW = "java0000";
-        connection = DriverManager.getConnection(jdbcDriver, dbID, dbPW);
-        return connection;
-    }
-    // 공통 사용 코드 메서드화
-    private void close(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
-        if(resultSet != null) {
-            try {resultSet.close();} catch(Exception exception){exception.printStackTrace();}
-        }
-        if(preparedStatement != null) {
-            try {preparedStatement.close();} catch(Exception exception){exception.printStackTrace();}
-        }
-        if(connection != null) {
-            try {connection.close();} catch(Exception exception){exception.printStackTrace();}
-        }
-    }
+	
+	
+    Connection connection = null;
+    PreparedStatement preparedStatement = null;
+    ResultSet resultSet = null;
+	
+	//로그인 실패시 -> null
+	//로그인 성공시 -> 성공한 Member 객체
+	public Member login(Connection connection, Member member) {
+		System.out.println("login 메서드 실행 MemberDao.java");
+        Member loginMember = null;
+	
+        try {
+            preparedStatement = connection.prepareStatement("SELECT id, level FROM member WHERE id=? AND pw=?");
+            preparedStatement.setString(1, member.getId());
+            preparedStatement.setString(2, member.getPw());
+            
+            resultSet = preparedStatement.executeQuery();
+            
+            while(resultSet.next()) {
+            	loginMember = new Member();
+            	loginMember.setId(resultSet.getString("id"));
+            	loginMember.setLevel(resultSet.getInt("level"));
+            }
+            
+        } catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(connection, preparedStatement, resultSet);
+		}
 
-	//멤버 입력 메서드
-	public int insertMember(Member member) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+		return loginMember;
+	}
+	
+	
+	public void insertMember(Connection connection, Member member) {
+		System.out.println("insertMember 메서드 실행 MemberDao.java");
         
         try {
-            connection = this.getConnection();
-            	//no 컬럼은 자동증가
-            preparedStatement = connection.prepareStatement("insert into member (id, pw, level) value (?, ?, ?)");
+            preparedStatement = connection.prepareStatement("INSERT INTO member (id, pw, level) VALUE (?, ?, ?)");
             preparedStatement.setString(1, member.getId());
             preparedStatement.setString(2, member.getPw());
             preparedStatement.setInt(3, member.getLevel());
-	  	    
+            
             preparedStatement.executeUpdate();
-	  	    
-            preparedStatement.close();
-            connection.close();
-	  	    
-		} catch(Exception exception) {
-            exception.printStackTrace();
-        } finally {
-            this.close(connection, preparedStatement, resultSet);
-        }
-        
-		return 0;
-	}	
+        	
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(connection, preparedStatement, resultSet);
+		}
+	}
 	
-	//멤버로그인 처리
-	public boolean loginMember(Member member) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        boolean loginResult = false; // 리턴을 위한 변수 선언. 기본값 false.. false 반환시 회원정보없음->실패
-        
+	public Member selectMember(Connection connection, String id) {
+		System.out.println("selectMember 메서드 실행 MemberDao.java");
+		Member getMember = new Member();
+		
         try {
-            connection = this.getConnection();
-            preparedStatement = connection.prepareStatement("select id, level from member where id=? and pw=?");
-            preparedStatement.setString(1, member.getId());
-            preparedStatement.setString(2, member.getPw());
+            preparedStatement = connection.prepareStatement("SELECT no, id, pw, level FROM member WHERE id=?");
+            preparedStatement.setString(1, id);
             
             resultSet = preparedStatement.executeQuery();
             
-            if(resultSet.next()) {
-            	//select 값이 있을경우 로그인성공,, 리턴값 true
-            	//서블릿에서 true값일시 세션에 로그인정보를 저장
-            	loginResult = true;
+            while(resultSet.next()) {
+            	getMember.setNo(resultSet.getInt("no"));
+            	getMember.setId(resultSet.getString("id"));
+            	getMember.setPw(resultSet.getString("pw"));
+            	getMember.setLevel(resultSet.getInt("level"));
             }
-            
-		} catch(Exception exception) {
-            exception.printStackTrace();
-        } finally {
-            this.close(connection, preparedStatement, resultSet);
-        }
-        return loginResult;
+        	
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(connection, preparedStatement, resultSet);
+		}
+		
+		return getMember;
 	}
 	
-	//한명의 회원정보
-	public Member selectMember(String id) {
-		Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        Member member = new Member();
+	public void updateMember(Member member) {
+		System.out.println("updateMember 메서드 실행 MemberDao.java");
         try {
-            connection = this.getConnection();
-            preparedStatement = connection.prepareStatement("select * from member where id=?");
-            preparedStatement.setString(1, member.getId());
-            resultSet = preparedStatement.executeQuery();
-            
-            if(resultSet.next()) {
-            	member = new Member();
-            	member.setId(resultSet.getString("id"));
-            	member.setPw(resultSet.getString("pw"));
-            	member.setLevel(resultSet.getInt("level"));	
-            }
-            
-		} catch(Exception exception) {
-            exception.printStackTrace();
-        } finally {
-            this.close(connection, preparedStatement, resultSet);
-        }      
-        return member;
+        	connection = DBHelper.getConnection();
+
+            preparedStatement = connection.prepareStatement("Update member SET pw=?, level=? WHERE no=? AND id=?");
+            preparedStatement.setString(1, member.getPw());
+            preparedStatement.setInt(2, member.getLevel());
+            preparedStatement.setInt(3, member.getNo());
+            preparedStatement.setString(4, member.getId());
+            preparedStatement.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(connection, preparedStatement, resultSet);
+		}
+
 	}
+	
+	public void deleteMember(Connection connection, Member member) {
+		System.out.println("deleteMember 메서드 실행 MemberDao.java");
+        try {
+	
+        	preparedStatement = connection.prepareStatement("SELECT no FROM member WHERE id=? AND pw=?");
+        	preparedStatement.setString(1, member.getId());
+        	preparedStatement.setString(2, member.getPw());
+        	resultSet = preparedStatement.executeQuery();
+  
+        	preparedStatement = connection.prepareStatement("DELETE FROM member WHERE id=? AND pw=?");
+        	preparedStatement.setString(1, member.getId());
+        	preparedStatement.setString(2, member.getPw());
+        	preparedStatement.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(connection, preparedStatement, resultSet);
+		}
+        	
+	}
+	
+	
 }

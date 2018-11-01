@@ -1,0 +1,21 @@
+1. 메인페이지
+ⓒIndexController.doGet -> ⓥindex.jsp
+
+2. 회원가입폼
+ⓒAddMemberController.doGet -> ⓥaddMember.jsp
+
+3. 회원가입액션
+ⓒAddMemberController.doPost -> ⓜMemberDao.InsertMember -> redirect:ⓒgetMemberList
+
+4. 로그인 폼
+ ⓒLogin.doGet -> ⓥLogin.jsp
+
+5. 로그인 액션
+ⓒlogin.doGet -> ⓜ memberDao.login() -> 성공 ⓒ index
+			실패 ⓒ Login
+11/1			
+session 에  로그인 정보 수정
+주문
+주문 목록(조인)
+
+service계층 사용 : 트랜잭션처리 회원삭제 -> 주문삭제

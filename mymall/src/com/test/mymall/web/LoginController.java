@@ -13,37 +13,40 @@ import com.test.mymall.dao.MemberDao;
 import com.test.mymall.vo.Member;
 
 
-
-@WebServlet("/login")
+@WebServlet("/LoginMemberController")
 public class LoginController extends HttpServlet {
 	private MemberDao memberDao;
-	
+	//로그인 폼
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("LoginMemberController.doGet()");
 		if(request.getSession().getAttribute("loginMember") == null) {
-			System.out.println("login.jsp forward");
-			request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
-		} else {
-			System.out.println("로그인중입니다 ... ");
-			response.sendRedirect("/index");
+			request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
 		}
+		else {
+			response.sendRedirect(request.getContextPath() + "/IndexController");
+		}
+		
 	}
-
+	//로그인 액션
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// boolean MemberDao.login(Member) 
-		boolean isLogin = false; 
+		System.out.println("LoginController.doPost()");
+		boolean isLogin = false;
 		Member member = new Member();
 		memberDao = new MemberDao();
-		
-		member.setId(request.getParameter("id"));
-		member.setPw(request.getParameter("pw"));
-		isLogin = memberDao.loginMember(member);
-		
+		String id = request.getParameter("id");
+		String pw = request.getParameter("pw");
+		member.setId(id);
+		member.setPw(pw);
+		isLogin = memberDao.login(member);
 		if(isLogin) {
 			HttpSession session = request.getSession();
-			session.setAttribute("loginMember", request.getParameter("id"));
-			request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
-		} else {
-			response.sendRedirect(request.getContextPath()+"/login");
+			session.setAttribute("loginMember", member.getId());
+			response.sendRedirect(request.getContextPath()+"/IndexController");
 		}
+		else {
+			response.sendRedirect(request.getContextPath()+"/LoginController");
+		}
+			
 	}
+
 }
