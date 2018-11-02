@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.test.mymall.dao.MemberDao;
 import com.test.mymall.service.MemberService;
 import com.test.mymall.vo.Member;
 
@@ -26,8 +24,6 @@ public class DeleteMemberController extends HttpServlet {
 		System.out.println("doPost.........DeleteMemberController.java");
 		HttpSession session = request.getSession();
 		Member loginMember = (Member)session.getAttribute("loginMember");
-		
-
 		memberService = new MemberService();
 		Member member = new Member();
 		member.setId(loginMember.getId());
@@ -42,5 +38,4 @@ public class DeleteMemberController extends HttpServlet {
 			response.sendRedirect(request.getContextPath()+"/DeleteMemberController");
 		}
 	}
-
 }

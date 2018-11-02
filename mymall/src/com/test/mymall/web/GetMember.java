@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.test.mymall.dao.MemberDao;
 import com.test.mymall.service.MemberService;
 import com.test.mymall.vo.Member;
 
@@ -20,7 +18,6 @@ public class GetMember extends HttpServlet {
 		System.out.println("doGet .......GetMember.java");	
 		HttpSession session = request.getSession();
 		Member loginMember = (Member)session.getAttribute("loginMember");
-
 		if(session.getAttribute("loginMember") == null) {
 			response.sendRedirect(request.getContextPath()+"/IndexController");
 		}else {

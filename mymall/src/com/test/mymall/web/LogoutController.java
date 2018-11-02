@@ -15,6 +15,4 @@ public class LogoutController extends HttpServlet {
 		request.getSession().invalidate();
 		response.sendRedirect(request.getContextPath()+"/IndexController"); //
 	}
-
-
 }

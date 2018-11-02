@@ -6,8 +6,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.test.mymall.dao.MemberDao;
 import com.test.mymall.service.MemberService;
 import com.test.mymall.vo.Member;
 
@@ -22,19 +20,14 @@ public class UpdateMemberController extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("doPost...........UpdateMemberController.java");
-		
+		System.out.println("doPost...........UpdateMemberController.java");		
 		Member member = new Member();
-		memberService = new MemberService(); 
-		
+		memberService = new MemberService(); 		
 		member.setNo(Integer.parseInt(request.getParameter("no")));
 		member.setId(request.getParameter("id"));
 		member.setPw(request.getParameter("pw"));
-		member.setLevel(Integer.parseInt(request.getParameter("level")));
-		
-		memberService.updateMember(member);
-		
+		member.setLevel(Integer.parseInt(request.getParameter("level")));		
+		memberService.updateMember(member);		
 		response.sendRedirect(request.getContextPath()+"/GetMemberController");
 	}
-
 }

@@ -35,13 +35,10 @@ public class LoginController extends HttpServlet {
 		System.out.println("doPost.... LoginController.java");
 		//memberDao = new MemberDao();
 		MemberService memberService = new MemberService();
-		Member member = new Member();
-		
+		Member member = new Member();		
 		member.setId(request.getParameter("id"));
-		member.setPw(request.getParameter("pw"));
-		
-		Member loginMember = memberService.login(member);
-		
+		member.setPw(request.getParameter("pw"));		
+		Member loginMember = memberService.login(member);		
 		if(loginMember!=null) {
 			System.out.println("로그인성공 loginController.java");
 			System.out.println(loginMember.getId()+"<<현재 로그인된 아이디 loginController.java");
@@ -53,6 +50,5 @@ public class LoginController extends HttpServlet {
 			response.sendRedirect(request.getContextPath()+"/LoginController");
 		}
 	}
-
 }
 

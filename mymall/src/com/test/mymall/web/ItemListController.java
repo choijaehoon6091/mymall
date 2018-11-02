@@ -3,7 +3,6 @@ package com.test.mymall.web;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,13 +18,9 @@ public class ItemListController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("doGet()메서드 itemList.java");
 		ItemService itemService = new ItemService();
-		HttpSession session = request.getSession();
-		
-		ArrayList<HashMap<String, Object>> list = itemService.itemList();
-		
+		HttpSession session = request.getSession();	
+		ArrayList<HashMap<String, Object>> list = itemService.itemList();		
 		session.setAttribute("list", list);
-
 		request.getRequestDispatcher("/WEB-INF/view/itemList.jsp").forward(request, response);
 	}
-
 }

@@ -8,19 +8,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ItemDao {
-	
     Connection connection = null;
     PreparedStatement preparedStatement = null;
     ResultSet resultSet = null;
-
 	
-	public ArrayList<HashMap<String, Object>> itemList(Connection connection) throws SQLException {
+    public ArrayList<HashMap<String, Object>> itemList(Connection connection) throws SQLException {
 		System.out.println("itemList 메서드 실행 ItemDao.java");
 		ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
-
         preparedStatement = connection.prepareStatement("SELECT * FROM item");
         resultSet=preparedStatement.executeQuery();
-
         while(resultSet.next()) {
         	HashMap<String, Object> map = new HashMap<String , Object>();
             map.put("no", resultSet.getString("no"));
@@ -28,8 +24,6 @@ public class ItemDao {
             map.put("price", resultSet.getString("price"));
             list.add(map);
         }
-
 		return list;
 	}
-
 }

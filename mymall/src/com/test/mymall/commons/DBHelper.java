@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-
 public class DBHelper {
 	public static Connection getConnection() throws Exception{
     	System.out.println("DB연결실행 MemberDao.java");
@@ -17,7 +16,6 @@ public class DBHelper {
         connection = DriverManager.getConnection(jdbcDriver, dbID, dbPW);
         return connection;
 	}
-	
     public static void close(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
         if(resultSet != null) {
             try {resultSet.close();} catch(Exception exception){exception.printStackTrace();}
