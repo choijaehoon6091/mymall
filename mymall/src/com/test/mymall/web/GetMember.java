@@ -31,4 +31,4 @@ public class GetMember extends HttpServlet {
 			request.getRequestDispatcher("WEB-INF/view/getMember.jsp").forward(request, response);	
 		}
 	}
-}	
+}

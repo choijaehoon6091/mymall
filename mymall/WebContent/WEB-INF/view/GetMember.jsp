@@ -28,4 +28,4 @@
 	<a href="${pageContext.request.contextPath}/DeleteMemberController">회원탈퇴</a>
 	<a href="${pageContext.request.contextPath}/IndexController">돌아가기</a>
 </body>
-</html>ml>
+</html>

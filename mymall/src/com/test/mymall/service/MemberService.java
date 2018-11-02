@@ -18,6 +18,21 @@ public class MemberService {
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	
+	public void updateMember(Member member) {
+		System.out.println("updateMember 메서드... MemberService.java");
+		try {
+			connection = DBHelper.getConnection();
+			
+			memberDao = new MemberDao();
+			memberDao.updateMember(connection, member);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	
 	public Member selectMember(String id) {
 		
 		System.out.println("selectMember 메서드... MemberService.java");
@@ -38,22 +53,30 @@ public class MemberService {
 	
 	
 	
-	public void deleteMember(Member member) {
+	public boolean deleteMember(Member member) {
 		System.out.println("deleteMember 메서드... MemberService.java");
+		boolean check= false;
 		try {
 			connection = DBHelper.getConnection();
+			// 자동커밋false
 			connection.setAutoCommit(false);
-			// 1. 첫번째기능
+
 			memberDao = new MemberDao();
-			memberDao.deleteMember(connection, member);
-			// 2. 두번째기능
 			memberItemDao = new MemberItemDao();
-			//memberItemDao.deleteMemberItem(connection, null);
-			
+
+			check = memberDao.deleteCheckMember(connection, member);
+			//비밀번호 틀릴시 false 로 실행되지않음
+			if(check) {
+				memberItemDao.deleteMemberItem(connection, member);
+				memberDao.deleteMember(connection, member);
+			}
+
+			//commit
 			connection.commit();
 
 		} catch(Exception e) {
 			try {
+				// 문제 발생시 롤백..
 				connection.rollback();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
@@ -64,6 +87,8 @@ public class MemberService {
 		} finally {
 			DBHelper.close(connection, preparedStatement, resultSet);
 		}
+		
+		return check;
 	}
 	
 	
@@ -101,3 +126,4 @@ public class MemberService {
 		}	
 	}
 }
+

@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 public class DBHelper {
 	public static Connection getConnection() throws Exception{
-    	System.out.println("DB¿¬°á½ÇÇà MemberDao.java");
+    	System.out.println("DB연결실행 MemberDao.java");
         Connection connection = null;
         Class.forName("com.mysql.jdbc.Driver");
         String jdbcDriver = "jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=euckr";

@@ -1,7 +1,6 @@
 package com.test.mymall.web;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,43 +9,50 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.test.mymall.dao.MemberDao;
+import com.test.mymall.service.MemberService;
 import com.test.mymall.vo.Member;
 
-
-@WebServlet("/LoginMemberController")
+@WebServlet("/LoginController")
 public class LoginController extends HttpServlet {
+
 	private MemberDao memberDao;
-	//로그인 폼
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("LoginMemberController.doGet()");
-		if(request.getSession().getAttribute("loginMember") == null) {
-			request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
-		}
-		else {
-			response.sendRedirect(request.getContextPath() + "/IndexController");
-		}
+		System.out.println("doGet.... LoginController.java");
 		
-	}
-	//로그인 액션
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("LoginController.doPost()");
-		boolean isLogin = false;
-		Member member = new Member();
-		memberDao = new MemberDao();
-		String id = request.getParameter("id");
-		String pw = request.getParameter("pw");
-		member.setId(id);
-		member.setPw(pw);
-		isLogin = memberDao.login(member);
-		if(isLogin) {
-			HttpSession session = request.getSession();
-			session.setAttribute("loginMember", member.getId());
-			response.sendRedirect(request.getContextPath()+"/IndexController");
+		if(request.getSession().getAttribute("loginMember") == null) {
+			System.out.println("login.jsp forward.... LoginController.java");
+			request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+		} else {
+			System.out.println("login.jsp Redirect.... LoginController.java");
+			System.out.println("로그인중입니다 ... ");
+			response.sendRedirect("/IndexController");
 		}
-		else {
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// 1. ID, PASSWORD
+		System.out.println("doPost.... LoginController.java");
+		//memberDao = new MemberDao();
+		MemberService memberService = new MemberService();
+		Member member = new Member();
+		
+		member.setId(request.getParameter("id"));
+		member.setPw(request.getParameter("pw"));
+		
+		Member loginMember = memberService.login(member);
+		
+		if(loginMember!=null) {
+			System.out.println("로그인성공 loginController.java");
+			System.out.println(loginMember.getId()+"<<현재 로그인된 아이디 loginController.java");
+			HttpSession session = request.getSession();
+			session.setAttribute("loginMember", loginMember);
+			request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);
+		} else if(loginMember==null) {
+			System.out.println("로그인실패");
 			response.sendRedirect(request.getContextPath()+"/LoginController");
 		}
-			
 	}
 
 }
+

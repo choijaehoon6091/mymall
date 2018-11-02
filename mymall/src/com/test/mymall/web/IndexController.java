@@ -9,11 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/IndexController")
 public class IndexController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-
-
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("IndexController.doGet()");
-		request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request,response);	
+		System.out.println("IndexController.doGet() IndexController.java");
+		request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);
 	}
 }
