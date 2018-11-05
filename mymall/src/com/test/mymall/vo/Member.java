@@ -30,5 +30,4 @@ public class Member {
 	public void setLevel(int level) {
 		this.level = level;
 	}
-	
 }

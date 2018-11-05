@@ -1,21 +1,31 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.test.mymall.dao.MemberMapper">
-	<select id="selectMemberList" resultType="com.test.mymall.vo.Member">
-		SELECT 
-		member_no as no
-		FROM member
+	<select id = "login" parameterType="com.test.mymall.vo.Member" resultType="com.test.mymall.vo.Member">
+		SELECT no, id, level FROM member WHERE id=#{id} AND pw=#{pw}
 	</select>
-	<select id="selectMemberOne" resultType="int">
-		SELECT
-			no as no
-		FROM member
-		WHERE no=#{no}
+	
+	<select id = "selectMember" parameterType="String" resultType="com.test.mymall.vo.Member">
+		SELECT no, id, pw, level FROM member WHERE id=#{id}
 	</select>
-	<insert id="insertMember" parameterType="com.test.mymall.vo.Member">
-		INSERT INTO member(no, id, pw, level)
-		VALUES #{no}, #{id}, #{pw}, #{level}
+	
+	<select id = "deleteCheckMember" parameterType="com.test.mymall.vo.Member" resultType="int">
+		SELECT count(*) FROM member WHERE id=#{id} AND pw=#{pw}
+	</select>
+	
+	<insert id = "insertMember" parameterType="com.test.mymall.vo.Member" >
+		INSERT INTO member (id, pw, level) VALUES (#{id}, #{pw}, #{level})
 	</insert>
+	
+	<update id = "updateMember" parameterType="com.test.mymall.vo.Member">
+		Update member SET pw=#{pw}, level=#{level} WHERE no=#{no} AND id=#{id}
+	</update>
+	
+	<delete id = "deleteMember" parameterType="com.test.mymall.vo.Member">
+		DELETE FROM member WHERE id=#{id}
+	</delete>
+	
+	
 </mapper>

@@ -1,30 +1,25 @@
 package com.test.mymall.commons;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.io.IOException;
+import java.io.InputStream;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 public class DBHelper {
-	public static Connection getConnection() throws Exception{
-    	System.out.println("DB연결실행 MemberDao.java");
-        Connection connection = null;
-        Class.forName("com.mysql.jdbc.Driver");
-        String jdbcDriver = "jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=euckr";
-        String dbID = "root";
-        String dbPW = "java0000";
-        connection = DriverManager.getConnection(jdbcDriver, dbID, dbPW);
-        return connection;
+	public static SqlSession getSqlSession() throws Exception{
+    	System.out.println("DB Connection MemberDao.java");
+    	InputStream inputStream = null; 	  
+		try {
+			String resource = "mybatis-config.xml";
+			inputStream = Resources.getResourceAsStream(resource);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SqlSessionFactory sqlSessionFactory= new SqlSessionFactoryBuilder().build(inputStream);
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		
+		return sqlSession;
 	}
-    public static void close(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
-        if(resultSet != null) {
-            try {resultSet.close();} catch(Exception exception){exception.printStackTrace();}
-        }
-        if(preparedStatement != null) {
-            try {preparedStatement.close();} catch(Exception exception){exception.printStackTrace();}
-        }
-        if(connection != null) {
-            try {connection.close();} catch(Exception exception){exception.printStackTrace();}
-        }
-    }
 }

@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import com.test.mymall.service.ItemService;
 import com.test.mymall.vo.Member;
 import com.test.mymall.vo.MemberItem;
@@ -29,8 +28,7 @@ public class OrderController extends HttpServlet {
 		memberItem.setMember_no(member.getNo());		
 		// int memberNo = member.getNo();
 		// MemberItemDao.insertMemberItem(MemberItem);		
-		itemService.Order(memberItem);
-		
+		itemService.Order(memberItem);	
 		response.sendRedirect(request.getContextPath()+"/OrderListController");		
 	}
 }

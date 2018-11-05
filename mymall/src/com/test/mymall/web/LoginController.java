@@ -7,16 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.test.mymall.dao.MemberDao;
 import com.test.mymall.service.MemberService;
 import com.test.mymall.vo.Member;
 
 @WebServlet("/LoginController")
 public class LoginController extends HttpServlet {
 
-	private MemberDao memberDao;
-	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("doGet.... LoginController.java");
 		
@@ -25,7 +21,6 @@ public class LoginController extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
 		} else {
 			System.out.println("login.jsp Redirect.... LoginController.java");
-			System.out.println("로그인중입니다 ... ");
 			response.sendRedirect("/IndexController");
 		}
 	}
@@ -37,18 +32,18 @@ public class LoginController extends HttpServlet {
 		MemberService memberService = new MemberService();
 		Member member = new Member();		
 		member.setId(request.getParameter("id"));
-		member.setPw(request.getParameter("pw"));		
-		Member loginMember = memberService.login(member);		
+		member.setPw(request.getParameter("pw"));	
+		Member loginMember = memberService.login(member);
+		
 		if(loginMember!=null) {
-			System.out.println("로그인성공 loginController.java");
-			System.out.println(loginMember.getId()+"<<현재 로그인된 아이디 loginController.java");
+			System.out.println("Login Success loginController.java");
+			System.out.println(loginMember.getId()+"<<Login ID loginController.java");
 			HttpSession session = request.getSession();
 			session.setAttribute("loginMember", loginMember);
 			request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);
 		} else if(loginMember==null) {
-			System.out.println("로그인실패");
+			System.out.println("Lofin Fail loginController.java");
 			response.sendRedirect(request.getContextPath()+"/LoginController");
 		}
 	}
 }
-

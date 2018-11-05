@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.ibatis.session.SqlSession;
 import com.test.mymall.commons.DBHelper;
 import com.test.mymall.dao.MemberItemDao;
 import com.test.mymall.vo.Member;
@@ -12,22 +14,26 @@ import com.test.mymall.vo.Member;
 public class MemberItemService {
 
 	private MemberItemDao memberItemDao;	
+	SqlSession sqlSession = null;
 	Connection connection = null;
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	
-	public ArrayList<HashMap<String, Object>> orderList(Member member) {
-		System.out.println("orderList 메서드... MemberItemService.java");
-		ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+	
+	public List<Map<String, Object>> orderList(Member member) {
+		System.out.println("orderList  Method Access MemberItemService.java");
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+			
 		try {
-			connection = DBHelper.getConnection();
+			sqlSession = DBHelper.getSqlSession();
 			
 			memberItemDao = new MemberItemDao();
-			list = memberItemDao.orderList(connection, member);		
+			list = memberItemDao.orderList(sqlSession, member);
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			DBHelper.close(connection, preparedStatement, resultSet);
+			sqlSession.close();
 		}		
 		return list;
 	}

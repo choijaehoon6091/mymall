@@ -30,5 +30,4 @@ public class MemberItem {
 	public void setOrder_date(String order_date) {
 		this.order_date = order_date;
 	}
-	
 }

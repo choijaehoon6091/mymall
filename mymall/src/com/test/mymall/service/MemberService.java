@@ -1,109 +1,120 @@
 package com.test.mymall.service;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import org.apache.ibatis.session.SqlSession;
 import com.test.mymall.commons.DBHelper;
 import com.test.mymall.dao.MemberDao;
 import com.test.mymall.dao.MemberItemDao;
 import com.test.mymall.vo.Member;
 
 public class MemberService {
+
 	private MemberDao memberDao;
 	private MemberItemDao memberItemDao;
-	Connection connection = null;
+	SqlSession sqlSession = null;
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	
 	public void updateMember(Member member) {
-		System.out.println("updateMember 메서드... MemberService.java");
+		System.out.println("updateMember  Method Access ... MemberService.java");
 		try {
-			connection = DBHelper.getConnection();		
+			sqlSession = DBHelper.getSqlSession();
+			
 			memberDao = new MemberDao();
-			memberDao.updateMember(connection, member);
+			memberDao.updateMember(sqlSession, member);
+			sqlSession.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			DBHelper.close(connection, preparedStatement, resultSet);
+			sqlSession.close();
 		}
 	}
-
-	public Member selectMember(String id) {		
-		System.out.println("selectMember 메서드... MemberService.java");
+	
+	public Member selectMember(String id) {
+		
+		System.out.println("selectMember  Method Access ... MemberService.java");
 		Member selectMember = new Member();
 		try {
-			connection = DBHelper.getConnection();
+			sqlSession = DBHelper.getSqlSession();
 			
 			memberDao = new MemberDao();
-			selectMember = memberDao.selectMember(connection, id);
+			selectMember = memberDao.selectMember(sqlSession, id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			DBHelper.close(connection, preparedStatement, resultSet);
-		}	
+			sqlSession.close();
+		}		
 		return selectMember;
 	}
-
+		
 	public boolean deleteMember(Member member) {
-		System.out.println("deleteMember 메서드... MemberService.java");
-		boolean check= false;
+		System.out.println("deleteMember  Method Access ... MemberService.java");
+		int check = 0;
+		boolean checkResult = false;
 		try {
-			connection = DBHelper.getConnection();
-			// 자동커밋false
-			connection.setAutoCommit(false);
+			sqlSession = DBHelper.getSqlSession();
+			//sqlSession.setAutoCommit(false);
+
 			memberDao = new MemberDao();
 			memberItemDao = new MemberItemDao();
-			check = memberDao.deleteCheckMember(connection, member);
-			//비밀번호 틀릴시 false 로 실행되지않음
-			if(check) {
-				memberItemDao.deleteMemberItem(connection, member);
-				memberDao.deleteMember(connection, member);
+
+			check = memberDao.deleteCheckMember(sqlSession, member);
+			
+			//login check
+			if(check>=1) {
+				System.out.println("delete confirm success! .... MemberService.java");
+				checkResult = true;
+				memberItemDao.deleteMemberItem(sqlSession, member);
+				memberDao.deleteMember(sqlSession, member);
+				sqlSession.commit();
+			} else {
+				System.out.println("delete confirm fail! .... MemberService.java");
 			}
-			//commit
-			connection.commit();
+
 		} catch(Exception e) {
 			try {
-				// 문제 발생시 롤백..
-				connection.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
+				sqlSession.rollback();
 			} finally {
-				DBHelper.close(connection, preparedStatement, resultSet);
+				sqlSession.close();
 			}
 			e.printStackTrace();
 		} finally {
-			DBHelper.close(connection, preparedStatement, resultSet);
-		}		
-		return check;
+			sqlSession.close();
+		}
+		
+		return checkResult;
 	}
-
+	
 	public Member login(Member member) {
-		System.out.println("login 메서드... MemberService.java");
+		System.out.println("login  Method Access ... MemberService.java");
 		memberDao = new MemberDao();
-		Member loginmember = new Member();	
+		Member loginmember = new Member();
+		
 		try {
-			connection = DBHelper.getConnection();
-			loginmember = memberDao.login(connection, member);
+			sqlSession = DBHelper.getSqlSession();
+			loginmember = memberDao.login(sqlSession, member);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			DBHelper.close(connection, preparedStatement, resultSet);
+			sqlSession.close();
 		}
 		return loginmember;
 	}
-
+	
 	public void addMember(Member member) {
-		System.out.println("addMember 메서드... MemberService.java");
-		memberDao = new MemberDao();		
+		System.out.println("addMember  Method Access ... MemberService.java");
+		memberDao = new MemberDao();
 		try {
-			connection = DBHelper.getConnection();
-			memberDao.insertMember(connection, member);
+			sqlSession = DBHelper.getSqlSession();
+			memberDao.insertMember(sqlSession, member);
+			sqlSession.commit();
+			
 		}  catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			DBHelper.close(connection, preparedStatement, resultSet);
+			sqlSession.close();
 		}	
 	}
 }
